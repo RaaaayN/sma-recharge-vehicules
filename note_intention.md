@@ -39,3 +39,4 @@ Quelle stratégie de répartition de la puissance permet de répondre le plus ef
 
 ## Sources 
 https://www.info.gouv.fr/actualite/electrification-les-mesures-annoncees-par-le-gouvernement
+

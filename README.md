@@ -1,0 +1,3 @@
+go mod init sma
+
+
