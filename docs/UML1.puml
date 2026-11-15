@@ -1,0 +1,106 @@
+@startuml
+left to right direction
+skinparam classAttributeIconSize 0
+
+class Simulation {
+  -clock : Clock
+  -site : Site
+  -coordinator : CoordinatorAgent
+  -vehicles : []VehicleAgent
+  -metrics : MetricsCollector
+  +Run(ctx Context)
+  -step(t int)
+}
+
+class Clock {
+  +Tick : int
+  +Hours : OpeningHours
+  +IsOpen(t int) : bool
+}
+
+class Site {
+  +PConnection : float64
+  +Chargers : []Charger
+  +Load : LoadProfile
+  +Tariff : TariffSchedule
+  +AvailablePower(t int) : float64
+  +FreeCharger() : *Charger
+}
+
+class Charger {
+  +ID : int
+  +MaxPower : float64
+  +MinPower : float64
+  +Kind : ChargerKind
+  +Occupant : *VehicleID
+}
+
+interface LoadProfile {
+  +Power(t int) : float64
+}
+
+class ConstantLoad {
+  +Value : float64
+}
+
+class HourlyProfileLoad {
+  +Hourly : [24]float64
+  +Noise : float64
+}
+
+interface TariffSchedule {
+  +GridPrice(t int) : float64
+}
+
+class FlatTariff {
+  +Price : float64
+}
+
+class PeakOffPeakTariff {
+  +OffPeakHours : []TimeRange
+  +PeakPrice : float64
+  +OffPeakPrice : float64
+}
+
+interface ScenarioSource {
+  +Profiles(seed int64) : []VehicleProfile
+}
+
+class RandomGenerator {
+  +ArrivalDist : Distribution
+  +DwellDist : Distribution
+  +SoCDist : Distribution
+  +CapacityDist : Distribution
+  +PowerMix : map[float64]float64
+}
+
+class CSVLoader {
+  +Path : string
+}
+
+class MetricsCollector {
+  -snapshots : []TickSnapshot
+  +Record(s TickSnapshot)
+  +Report() : KPIReport
+}
+
+class CoordinatorAgent
+class VehicleAgent
+
+Simulation *-- Clock
+Simulation *-- Site
+Simulation *-- MetricsCollector
+Simulation *-- CoordinatorAgent
+Simulation "1" *-- "0..*" VehicleAgent
+Simulation --> ScenarioSource : crée les véhicules
+Site "1" *-- "1..*" Charger
+Site o-- LoadProfile
+Site o-- TariffSchedule
+LoadProfile <|.. ConstantLoad
+LoadProfile <|.. HourlyProfileLoad
+TariffSchedule <|.. FlatTariff
+TariffSchedule <|.. PeakOffPeakTariff
+ScenarioSource <|.. RandomGenerator
+ScenarioSource <|.. CSVLoader
+@enduml
+

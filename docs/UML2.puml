@@ -1,0 +1,114 @@
+@startuml
+top to bottom direction
+skinparam classAttributeIconSize 0
+
+interface Agent {
+  +Start()
+  +Percept()
+  +Deliberate()
+  +Act()
+}
+
+class VehicleAgent {
+  -profile : VehicleProfile
+  -state : VehicleState
+  -energyDelivered : float64
+  -charger : *Charger
+  -behavior : Behavior
+  -inbox : chan Message
+  +View() : EVView
+  +Laxity(t int) : float64
+}
+
+class VehicleProfile {
+  +Arrival : int
+  +PlannedDeparture : int
+  +BatteryCapacity : float64
+  +SoCArrival : float64
+  +SoCTarget : float64
+  +MaxPower : float64
+  +Budget : float64
+  +Persona : Persona
+}
+
+enum VehicleState {
+  Waiting
+  Charging
+  Full
+  Left
+}
+
+interface Behavior {
+  +OnArrival(p Persona, ctx DayContext) : ArrivalDecision
+  +OnNotify(p Persona, f Forecast) : NotifyDecision
+  +OnEvent(p Persona, e Event) : EventDecision
+  +OnPrice(price float64, f Forecast) : PriceDecision
+  +OnDeparture(p Persona, r Report) : Satisfaction
+}
+
+class RuleBehavior
+
+class LLMBehavior {
+  -broker : *LLMBroker
+}
+
+class LLMBroker {
+  -client : GroqClient
+  -cache : map[string]string
+  -requests : chan LLMRequest
+  +Start()
+}
+
+class CoordinatorAgent {
+  -power : PowerStrategy
+  -pricing : PricingStrategy
+  -priceInterval : int
+  -queue : []VehicleID
+  -inbox : chan Message
+  -assignChargers(t int)
+  -publishPrice(t int)
+}
+
+interface PowerStrategy {
+  +Name() : string
+  +Allocate(t int, pSite float64, evs []EVView) : Allocation
+}
+
+class EqualShare
+class EarliestDeparture
+class FirstComeFirstServed
+class LeastLaxity
+class LowestSoCFirst
+class SmoothedLLF
+
+interface PricingStrategy {
+  +Name() : string
+  +Price(t int, s SiteState) : float64
+}
+
+class AscendingPricing {
+  +Start : float64
+  +Step : float64
+  +MaxRounds : int
+}
+
+Agent <|.. VehicleAgent
+Agent <|.. CoordinatorAgent
+VehicleAgent *-- VehicleProfile
+VehicleAgent --> VehicleState
+VehicleAgent o-- Behavior
+Behavior <|.. RuleBehavior
+Behavior <|.. LLMBehavior
+LLMBehavior --> LLMBroker
+VehicleAgent ..> CoordinatorAgent : Request, Grant, Price
+CoordinatorAgent o-- PowerStrategy
+CoordinatorAgent o-- PricingStrategy
+PowerStrategy <|.. EqualShare
+PowerStrategy <|.. EarliestDeparture
+PowerStrategy <|.. FirstComeFirstServed
+PowerStrategy <|.. LeastLaxity
+PowerStrategy <|.. LowestSoCFirst
+PowerStrategy <|.. SmoothedLLF
+PricingStrategy <|.. AscendingPricing
+@enduml
+
