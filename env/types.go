@@ -1,5 +1,7 @@
 package env
 
+
+const DtHours = 5.0 / 60.0
 type VehicleID string
 
 
