@@ -42,3 +42,54 @@ type HourlyProfileLoad struct {
 
 
 
+
+
+
+
+type TariffSchedule interface{ GridPrice(t int) float64 }
+
+type FlatTariff struct{ Price float64 }
+
+//TODO
+//func GridPrice(int)
+
+
+
+//TODO prévoir un truc pour gérer les passages après minuit
+//type TimeRange struct{} 
+
+type TimeRange int
+
+type PeakOffPeakTariff struct {
+	OffPeakHours []TimeRange
+	PeakPrice    float64
+	OffPeakPrice float64
+}
+
+
+//TODO func GridPrice 
+
+
+
+
+
+
+
+
+
+
+
+
+
+type Site struct {
+	PConnection float64
+	Chargers    []Charger
+	Load        LoadProfile
+	Tariff      TariffSchedule
+}
+
+
+//TODO func AvailablePower
+
+
+//TODO func FreeCharger

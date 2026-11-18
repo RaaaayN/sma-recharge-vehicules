@@ -1,0 +1,65 @@
+@startuml
+left to right direction
+skinparam classAttributeIconSize 0
+
+class TickSnapshot {
+  +T : int
+  +PSite : float64
+  +TotalAllocated : float64
+  +Vehicles : []VehicleSnapshot
+}
+
+class VehicleSnapshot {
+  +ID : VehicleID
+  +State : string
+  +Soc : float64
+  +AllocatedKW : float64
+  +EnergyNeeded : float64
+}
+
+class SimConfig {
+  +Seed : int64
+  +Strategy : string
+  +Ticks : int
+  +MinutesPerTick : int
+  +Vehicles : []VehicleConfig
+}
+
+class VehicleConfig {
+  +ID : VehicleID
+  +Arrival : int
+  +Departure : int
+  +EnergyNeeded : float64
+  +MaxPower : float64
+}
+
+class Simulation {
+  -step(t int)
+  +Snapshots() : <-chan TickSnapshot
+  +Config() : SimConfig
+}
+
+class MetricsCollector {
+  +Record(s TickSnapshot)
+  +Report() : KPIReport
+}
+
+class WebServer <<cmd/simu>> {
+  +ServeHTTP()
+  -handleConfig()
+  -handleEvents()
+}
+
+class WebClient <<web/app.js>> {
+  +EventSource /events
+  +fetch /config
+}
+
+TickSnapshot "1" *-- "0..*" VehicleSnapshot
+SimConfig "1" *-- "0..*" VehicleConfig
+Simulation ..> TickSnapshot : produit à chaque tick
+Simulation ..> SimConfig : décrit
+Simulation --> MetricsCollector : Record(s)
+WebServer --> Simulation : lit Snapshots() et Config()
+WebServer ..> WebClient : JSON via SSE
+@enduml
