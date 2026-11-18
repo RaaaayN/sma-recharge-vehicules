@@ -16,8 +16,8 @@ type EVView struct {
 
 
 
-//TODO faut voir comment on gère les allocations, on fait une map vehicle vers float ??
-type Allocation float64
+//on part sur ça pour le moment
+type Allocation map[VehicleID]float64
 
 type PowerStrategy interface {
 	Name() string
