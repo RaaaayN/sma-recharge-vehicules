@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recharge VE - simulation</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 1rem auto; padding: 0 1rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border-bottom: 1px solid #ccc; padding: .4rem .6rem; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    #status { color: #555; }
+  </style>
+</head>
+<body>
+  <h1>Recharge de véhicules électriques</h1>
+  <p id="status">Connexion…</p>
+  <canvas id="chart" height="120"></canvas>
+  <table>
+    <thead>
+      <tr><th>Véhicule</th><th>État</th><th>SoC</th><th>Puissance (kW)</th><th>Énergie restante (kWh)</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <script src="app.js"></script>
+</body>
+</html>
