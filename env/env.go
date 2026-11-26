@@ -1,6 +1,5 @@
 package env
 
-
 type Environment interface {
 	GetArguments() []string
 	AddArgument(arg string)

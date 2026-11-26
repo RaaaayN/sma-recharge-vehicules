@@ -1,6 +1,6 @@
 package env
 
-//TODO vérifier après état de l'art fini 
+//TODO vérifier après état de l'art fini
 type ChargerKind int
 
 const (
@@ -8,37 +8,28 @@ const (
 	DC
 )
 
-
-// Charger 
+// Charger
 type Charger struct {
-	ID string
-	Kind ChargerKind
+	ID       string
+	Kind     ChargerKind
 	MaxPower float64
 	MinPower float64
 	Occupant *VehicleID
 }
 
-
 // je sais pas si on le fait comme ça
-type LoadProfile interface {Power(t int) float64} 
-
+type LoadProfile interface{ Power(t int) float64 }
 
 type ConstantLoad struct{ Value float64 }
 
-//TODO 
+//TODO
 //func Power(int)
 
-
-// à vérifier aussi après état de l'art 
+// à vérifier aussi après état de l'art
 type HourlyProfileLoad struct {
 	Hourly [24]float64
-	Noise  float64 
+	Noise  float64
 }
 
 //TODO
 // func Power(t int)
-
-
-
-
-

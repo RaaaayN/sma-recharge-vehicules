@@ -1,8 +1,6 @@
 package agt
 
-
-
-// States 
+// States
 type VehicleState int
 
 const (
@@ -11,7 +9,3 @@ const (
 	Full
 	Left
 )
-
-
-
-
