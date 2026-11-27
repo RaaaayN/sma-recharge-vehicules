@@ -1,3 +1,5 @@
+//Définit les structures passives du lieu : Charger (avec sa puissance max) et ParkingSite (avec sa puissance max)
+
 package env
 
 //TODO vérifier après état de l'art fini

@@ -1,0 +1,1 @@
+//génère ta population de véhicules (Urgents, Navetteurs, Flexibles) avec une graine aléatoire fixe pour pouvoir comparer deux scénarios sur exactement les mêmes voitures.
