@@ -2,7 +2,7 @@
 
 package env
 
-//TODO vérifier après état de l'art fini
+// TODO vérifier après état de l'art fini
 type ChargerKind int
 
 const (
@@ -16,7 +16,7 @@ type Charger struct {
 	Kind     ChargerKind
 	MaxPower float64
 	MinPower float64
-	Occupant *VehicleID
+	Occupant *int // pointeur vers l'ID du véhicule qui occupe la borne,passe à null si la borne est libre
 }
 
 // je sais pas si on le fait comme ça

@@ -3,7 +3,7 @@
 
 package agt
 
-import(
+import (
 	"context"
 )
 
@@ -15,15 +15,15 @@ type Agent interface {
 
 type MessageType int
 
-const(
+const (
 	ProposePrice MessageType = iota //ParkingManager --> Vehicle
-	PowerRequest // Vehicle --> ParkingManager
+	PowerRequest                    // Vehicle --> ParkingManager
 )
 
-type Message struct{
-	From int //ID de l'émetteur
-    Type MessageType
-	Tick int //Pour que le vehicule sache quelle heure il est au moment de calculer le temps qu'il lui reste
-    Value float64
-    Reply chan<- Message //En ecriture seulement car une voiture ne doit pas pouvoir lire les reponses des autres voitures
+type Message struct {
+	From  int //ID de l'émetteur
+	Type  MessageType
+	Tick  int //Pour que le vehicule sache quelle heure il est au moment de calculer le temps qu'il lui reste
+	Value float64
+	Reply chan<- Message //En ecriture seulement car une voiture ne doit pas pouvoir lire les reponses des autres voitures
 }

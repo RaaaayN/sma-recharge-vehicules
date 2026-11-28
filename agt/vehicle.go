@@ -1,53 +1,49 @@
 package agt
 
-import(
-	"sma/config"
+import (
 	"context"
-	"fmt"
-	"math"
 )
 
 //Définition de l'etat du vehicule (branché/débranché)
 
 type VehicleState int
 
-const(
+const (
 	VehicleUnplugged VehicleState = iota //pas pluggé à une borne
-	VehiclePlugged VehicleState // pluggé à une borne
+	VehiclePlugged                       // pluggé à une borne
 )
 
-type Vehicle struct{
+type Vehicle struct {
 	ID int
 
 	//Batterie
-	BatteryCapacity float64
+	BatteryCapacity    float64
 	MaxPowerAcceptedKW float64
-	CurrentSoC float64
-	TargetSoC float64
+	CurrentSoC         float64
+	TargetSoC          float64
 
 	//arrivee et depart
 	ArrivalTick int
-	DepartTick int
+	DepartTick  int
 
 	//Caractere du proprietaire du vehicule
 	Alpha float64
-	Beta float64
+	Beta  float64
 	Gamma float64
 
 	//Etat spatial sur parking
-	State VehicleState
+	State             VehicleState
 	AssignedChargerID int
 
-	//chanel pour recevoir 
+	//chanel pour recevoir
 	Cin chan Message
 
 	//memoire pour lier les differentes etapes percept->delib->act
-	lastMessage Message
+	lastMessage    Message
 	requestedPower float64
 }
 
-
-//lance routine autonome de l'agent vehcile
+// lance routine autonome de l'agent vehcile
 func (v *Vehicle) Start(ctx context.Context) {
 	go func() {
 		for {
@@ -65,38 +61,38 @@ func (v *Vehicle) Start(ctx context.Context) {
 	}()
 }
 
-//Créer un nouveau vehicule et renvoyer son adresse memoire
-func NewVehicle(id int, batCapKWh, maxPowAccKW, curSoc, targetSoc float64, arrTick, depTick int, alpha, beta, gamma float64) *Vehicle {
+// Créer un nouveau vehicule et renvoyer son adresse memoire
+func NewVehicle(id int, batCapKWh, maxPowerAccKW, curSoC, targetSoC float64, arrTick, depTick int, alpha, beta, gamma float64) *Vehicle {
 	return &Vehicle{
-		ID: id,
-		BatteryCapacity: batCapKWh,
+		ID:                 id,
+		BatteryCapacity:    batCapKWh,
 		MaxPowerAcceptedKW: maxPowerAccKW,
-		CurrentSoC: curSoC,
-		TargetSoC: targetSoC,
-		ArrivalTick: arrTick,
-		DepartTick: depTick,
-		Alpha: alpha,
-		Beta: beta,
-		Gamma: gamma,
-		State: VehicleUnplugged,
-		AssignedChargerID: -1,
-		Cin: make(chan Message),
+		CurrentSoC:         curSoC,
+		TargetSoC:          targetSoC,
+		ArrivalTick:        arrTick,
+		DepartTick:         depTick,
+		Alpha:              alpha,
+		Beta:               beta,
+		Gamma:              gamma,
+		State:              VehicleUnplugged,
+		AssignedChargerID:  -1,
+		Cin:                make(chan Message),
 	}
 }
 
 //Percept -> Deliberate -> Act
 
-//Percept
+// Percept
 func (v *Vehicle) Percept(msg Message) {
 	v.lastMessage = msg
 }
 
-//Deliberate 
+// Deliberate
 func (v *Vehicle) Deliberate() {
 	v.requestedPower = v.ComputeRequestedPower(v.lastMessage.Tick, v.lastMessage.Value)
 }
 
-//Act
+// Act
 func (v *Vehicle) Act() {
 	if v.lastMessage.Reply != nil {
 		v.lastMessage.Reply <- Message{
@@ -106,4 +102,10 @@ func (v *Vehicle) Act() {
 			Value: v.requestedPower,
 		}
 	}
+}
+
+// ComputeRequestedPower calcule la puissance demandée par le véhicule en fonction du tick courant et du prix proposé par le manager
+// TODO : version provisoire, renvoie la puissance max acceptée par le véhicule
+func (v *Vehicle) ComputeRequestedPower(tick int, price float64) float64 {
+	return v.MaxPowerAcceptedKW
 }
